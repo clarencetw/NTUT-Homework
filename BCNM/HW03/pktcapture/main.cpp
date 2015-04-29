@@ -25,6 +25,7 @@ int main(int argc,char **argv)
   int ch, npackets;
 
   dev = filter = NULL;
+  npackets = -1;
 
 	while((ch = getopt(argc, argv, "c:f:i:l")) != -1)	{
 		switch(ch){
@@ -54,13 +55,6 @@ int main(int argc,char **argv)
 			exit(1);
 		}
 	}
-
-	if(argc - optind != 1)
-	{
-		fprintf(stdout,"Usage: %s numpackets\n",argv[0]);
-		exit(1);
-	}
-	npackets = atoi(argv[optind]);
 
   if(dev == NULL)
   {
