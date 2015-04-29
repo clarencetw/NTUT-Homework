@@ -15,7 +15,7 @@ u_char* handle_IP
 
     /* jump pass the ethernet header */
     ip = (struct my_ip*)(packet + sizeof(struct ether_header));
-    length -= sizeof(struct ether_header); 
+    length -= sizeof(struct ether_header);
 
     /* check to see we have a packet of valid length */
     if (length < sizeof(struct my_ip))
@@ -63,9 +63,9 @@ u_char* handle_IP
         fprintf(stdout,"     Total Length: %d\n", len);
         fprintf(stdout,"     Identification: 0x%x (%d)\n", id,id);
         fprintf(stdout,"     TTL: %d\n", ip->ip_ttl);
-        fprintf(stdout,"     Protocol: 0x%x (%d)\n", proto,proto);
+        fprintf(stdout,"     Protocol: 0x%x (%d) %s\n", proto, proto, handle_protocol(ip->ip_p));
         fprintf(stdout,"     Checksum: 0x%x\n", checksum);
-        
+
         tcp = (struct my_tcp*)(packet + sizeof(struct ether_header) + sizeof(struct my_ip));
         fprintf(stdout,"Transmission Control Protocol\n");
         fprintf(stdout,"     Src Port: %d, Dst Port: %d\n",  tcp->th_sport, tcp->th_dport);
@@ -116,3 +116,24 @@ u_int16_t handle_ethernet
     return ether_type;
 }
 
+char* handle_protocol
+        (u_int8_t protocol)
+{
+	char *proto;
+    switch(protocol)
+    {
+    case 1:
+    	sprintf(proto, "%s", "ICMP");
+    	break;
+    case 2:
+    	sprintf(proto, "%s", "IGMP");
+    	break;
+    case 6:
+    	sprintf(proto, "%s", "TCP");
+    	break;
+    case 17:
+    	sprintf(proto, "%s", "UDP");
+    	break;
+    }
+	return proto;
+}

@@ -1,5 +1,6 @@
 #include "handle.h"
 
+pcap_t* descr;
 
 void my_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char*
         packet)
@@ -11,6 +12,10 @@ void my_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char*
         handle_IP(args,pkthdr,packet);
 }
 
+void signal_process(int signal)
+{
+	pcap_breakloop(descr);
+}
 
 int main(int argc,char **argv)
 {
@@ -28,40 +33,40 @@ int main(int argc,char **argv)
   dev = filter = NULL;
   npackets = -1;
 
-	while((ch = getopt(argc, argv, "c:f:i:l")) != -1)	{
-		switch(ch){
+  while((ch = getopt(argc, argv, "c:f:i:l")) != -1)	{
+  	switch(ch){
     case 'c':
-			npackets = atoi(optarg);
-			break;
-		case 'f':
-			filter = optarg;
-			break;
-		case 'i':
-			dev = optarg;
-			break;
-		case 'l':
-		    /* get the devices list*/
-		    if(pcap_findalldevs(&devlist, errbuf) == -1){
-		    	printf("%s\n", errbuf);
-		    	exit(1);
-		    }
-		    /* list the device*/
-		    for(device = devlist; device; device = device->next){
-		    	printf("%s - %s\n", device->name, device->description);
-		    }
-		    pcap_freealldevs(devlist);
-			break;
-		default:
-			fprintf(stdout,"Usage: %s numpackets\n",argv[0]);
-			exit(1);
-		}
-	}
+    	npackets = atoi(optarg);
+    	break;
+  	case 'f':
+      filter = optarg;
+      break;
+  	case 'i':
+      dev = optarg;
+      break;
+  	case 'l':
+      /* get the devices list*/
+      if(pcap_findalldevs(&devlist, errbuf) == -1){
+      	printf("%s\n", errbuf);
+      	exit(1);
+      }
+      /* list the device*/
+      for(device = devlist; device; device = device->next){
+      	printf("%s - %s\n", device->name, device->description);
+      }
+      pcap_freealldevs(devlist);
+      break;
+  	default:
+      fprintf(stdout,"Usage: %s numpackets\n",argv[0]);
+      exit(1);
+  	}
+  }
 
   if(dev == NULL)
   {
-		dev = pcap_lookupdev(errbuf);
-		if(dev == NULL)
-		{ printf("%s\n",errbuf); exit(1); }
+    dev = pcap_lookupdev(errbuf);
+    if(dev == NULL)
+    { printf("%s\n",errbuf); exit(1); }
   }
 
   /* ask pcap for the network address and mask of the device */
@@ -75,7 +80,7 @@ int main(int argc,char **argv)
 
   if(filter != NULL)
   {
-  	/* Lets try and compile the program.. non-optimized*/
+    /* Lets try and compile the program.. non-optimized*/
     if(pcap_compile(descr, &fp, filter, 0, netp) == -1)
     { fprintf(stderr, "Error calling pcap_compile.\n"); exit(1); }
 
@@ -84,6 +89,7 @@ int main(int argc,char **argv)
     { fprintf(stderr, "Error setting filter\n"); exit(1); }
   }
 
+  signal(SIGINT, signal_process);
   pcap_loop(descr, npackets, my_callback,args);
 
   if(pcap_stats(descr, &ps) == -1) {

@@ -5,12 +5,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <signal.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 #include <netinet/if_ether.h>
 #include <net/ethernet.h>
+#ifdef __linux__
 #include <netinet/ether.h>
+#endif
 #include <netinet/ip.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
@@ -27,6 +31,8 @@ u_char* handle_IP
         (u_char *args,const struct pcap_pkthdr* pkthdr,const u_char*
         packet);
 
+char* handle_protocol
+		(u_int8_t my_ip);
 
 struct my_ip {
 	u_int8_t	ip_vhl;		/* header length, version */
