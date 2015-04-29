@@ -13,9 +13,9 @@ void my_callback(u_char *args,const struct pcap_pkthdr* pkthdr,const u_char*
 
 
 int main(int argc,char **argv)
-{ 
+{
 	pcap_if_t *devlist;
-    char *dev; 
+    char *dev;
     char errbuf[PCAP_ERRBUF_SIZE];
     pcap_t* descr;
     struct bpf_program;      /* hold compiled program     */
@@ -23,7 +23,7 @@ int main(int argc,char **argv)
     bpf_u_int32 netp;           /* ip                        */
     u_char* args = NULL;
 
-    if(argc < 2){ 
+    if(argc < 2){
         fprintf(stdout,"Usage: %s numpackets\n",argv[0]);
         return 0;
     }
@@ -45,10 +45,13 @@ int main(int argc,char **argv)
 
     if(argc > 2)
     {
-    	/** Hint: put the filtering functions here **/
-    	fprintf(stderr,"Error arguments.\n");
-    	fprintf(stdout,"Usage: %s numpackets\n",argv[0]);
-        return 0;
+      /* Lets try and compile the program.. non-optimized*/
+      if(pcap_compile(descr, &fp, argv[2], 0, netp) == -1)
+      { fprintf(stderr, "Error calling pcap_compile.\n"); exit(1); }
+
+      /* set the compiled program as the filter */
+      if(pcap_setfilter(descr, &fp) == -1)
+      { fprintf(stderr, "Error setting filter\n"); exit(1); }
     }
 
     pcap_loop(descr,atoi(argv[1]),my_callback,args);
@@ -56,4 +59,3 @@ int main(int argc,char **argv)
     fprintf(stdout,"\nfinished\n");
     return 0;
 }
-
