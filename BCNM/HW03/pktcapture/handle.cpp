@@ -35,8 +35,8 @@ u_char* handle_IP
     /* check version */
     if(version != 4)
     {
-      fprintf(stdout,"Unknown version %d\n",version);
-      return NULL;
+        fprintf(stdout,"Unknown version %d\n",version);
+        return NULL;
     }
 
     /* check header length */
@@ -103,14 +103,14 @@ u_int16_t handle_ethernet
     fprintf(stdout,"Captured length: %d bytes\n",caplen);
     if (ether_type == ETHERTYPE_IP)
     {
-	    fprintf(stdout,"Ethernet II \n");
-	    fprintf(stdout,"     Destination: %s\n"
-	            ,ether_ntoa((struct ether_addr*)eptr->ether_dhost));
-	    fprintf(stdout,"     Source: %s\n"
-	            ,ether_ntoa((struct ether_addr*)eptr->ether_shost));
+        fprintf(stdout,"Ethernet II \n");
+        fprintf(stdout,"     Destination: %s\n"
+                ,ether_ntoa((struct ether_addr*)eptr->ether_dhost));
+        fprintf(stdout,"     Source: %s\n"
+                ,ether_ntoa((struct ether_addr*)eptr->ether_shost));
         fprintf(stdout,"     Type: IP (0x0800)\n");
     }else{
-    	fprintf(stdout,"Not implemented type\n");
+        fprintf(stdout,"Not implemented type\n");
     }
 
     return ether_type;
@@ -119,21 +119,21 @@ u_int16_t handle_ethernet
 char* handle_protocol
         (u_int8_t protocol)
 {
-	char *proto;
+    char *proto;
     switch(protocol)
     {
     case 1:
-    	sprintf(proto, "%s", "ICMP");
-    	break;
+        sprintf(proto, "%s", "ICMP");
+        break;
     case 2:
-    	sprintf(proto, "%s", "IGMP");
-    	break;
+        sprintf(proto, "%s", "IGMP");
+        break;
     case 6:
-    	sprintf(proto, "%s", "TCP");
-    	break;
+        sprintf(proto, "%s", "TCP");
+        break;
     case 17:
-    	sprintf(proto, "%s", "UDP");
-    	break;
+        sprintf(proto, "%s", "UDP");
+        break;
     }
-	return proto;
+    return proto;
 }
