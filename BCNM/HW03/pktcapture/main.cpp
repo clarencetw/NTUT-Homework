@@ -26,8 +26,11 @@ int main(int argc,char **argv)
 
   dev = filter = NULL;
 
-	while((ch = getopt(argc, argv, "f:i:l")) != -1)	{
+	while((ch = getopt(argc, argv, "c:f:i:l")) != -1)	{
 		switch(ch){
+    case 'c':
+			npackets = atoi(optarg);
+			break;
 		case 'f':
 			filter = optarg;
 			break;
