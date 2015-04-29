@@ -21,6 +21,7 @@ int main(int argc,char **argv)
   struct bpf_program fp;      /* hold compiled program     */
   bpf_u_int32 maskp;          /* subnet mask               */
   bpf_u_int32 netp;           /* ip                        */
+  struct pcap_stat ps;
   u_char* args = NULL;
   int ch, npackets;
 
@@ -84,6 +85,13 @@ int main(int argc,char **argv)
   }
 
   pcap_loop(descr, npackets, my_callback,args);
+
+  if(pcap_stats(descr, &ps) == -1) {
+  	printf("pcap_stats(): %s\n",errbuf);
+  	exit(1);
+  } else {
+  	printf("\nrecv packet: %d drop packet:%d\n", ps.ps_recv, ps.ps_drop);
+  }
 
   fprintf(stdout,"\nfinished\n");
 
