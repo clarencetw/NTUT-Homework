@@ -18,7 +18,7 @@ int main(int argc,char **argv)
     char *dev;
     char errbuf[PCAP_ERRBUF_SIZE];
     pcap_t* descr;
-    struct bpf_program;      /* hold compiled program     */
+    struct bpf_program fp;      /* hold compiled program     */
     bpf_u_int32 maskp;          /* subnet mask               */
     bpf_u_int32 netp;           /* ip                        */
     u_char* args = NULL;
